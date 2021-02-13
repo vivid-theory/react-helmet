@@ -5,14 +5,16 @@ import isEqual from "react-fast-compare";
 import {
     convertReactPropstoHtmlAttributes,
     handleClientStateChange,
+    HelmetProps,
     mapStateOnServer,
     reducePropsToState,
     warn
-} from "./HelmetUtils.js";
-import {TAG_NAMES, VALID_TAG_NAMES} from "./HelmetConstants.js";
+} from "./HelmetUtils";
+import {TAG_NAMES, VALID_TAG_NAMES} from "./HelmetConstants";
+
 
 const Helmet = Component =>
-    class HelmetWrapper extends React.Component {
+    class HelmetWrapper extends React.Component<HelmetProps> {
         /**
          * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
          * @param {Object} bodyAttributes: {"className": "root"}
@@ -57,6 +59,8 @@ const Helmet = Component =>
             encodeSpecialCharacters: true
         };
 
+        static renderStatic = Component.renderStatic;
+
         // Component.peek comes from react-side-effect:
         // For testing, you may use a static peek() method available on the returned component.
         // It lets you get the current state without resetting the mounted instance stack.
@@ -85,7 +89,7 @@ const Helmet = Component =>
             return mappedState;
         };
 
-        static set canUseDOM(canUseDOM) {
+        static set canUseDOM(canUseDOM: boolean) {
             Component.canUseDOM = canUseDOM;
         }
 

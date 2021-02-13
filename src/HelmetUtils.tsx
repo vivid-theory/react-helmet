@@ -697,7 +697,7 @@ const getMethodsForTag = (type:string, tags, encode:boolean) => {
 const mapStateOnServer = ({
     baseTag,
     bodyAttributes,
-    encode,
+    encodeSpecialCharacters,
     htmlAttributes,
     linkTags,
     metaTags,
@@ -707,23 +707,23 @@ const mapStateOnServer = ({
     title = "",
     titleAttributes
 }) => ({
-    base: getMethodsForTag(TAG_NAMES.BASE, baseTag, encode),
+    base: getMethodsForTag(TAG_NAMES.BASE, baseTag, encodeSpecialCharacters),
     bodyAttributes: getMethodsForTag(
         ATTRIBUTE_NAMES.BODY,
         bodyAttributes,
-        encode
+        encodeSpecialCharacters
     ),
     htmlAttributes: getMethodsForTag(
         ATTRIBUTE_NAMES.HTML,
         htmlAttributes,
-        encode
+        encodeSpecialCharacters
     ),
-    link: getMethodsForTag(TAG_NAMES.LINK, linkTags, encode),
-    meta: getMethodsForTag(TAG_NAMES.META, metaTags, encode),
-    noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags, encode),
-    script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags, encode),
-    style: getMethodsForTag(TAG_NAMES.STYLE, styleTags, encode),
-    title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleAttributes}, encode)
+    link: getMethodsForTag(TAG_NAMES.LINK, linkTags, encodeSpecialCharacters),
+    meta: getMethodsForTag(TAG_NAMES.META, metaTags, encodeSpecialCharacters),
+    noscript: getMethodsForTag(TAG_NAMES.NOSCRIPT, noscriptTags, encodeSpecialCharacters),
+    script: getMethodsForTag(TAG_NAMES.SCRIPT, scriptTags, encodeSpecialCharacters),
+    style: getMethodsForTag(TAG_NAMES.STYLE, styleTags, encodeSpecialCharacters),
+    title: getMethodsForTag(TAG_NAMES.TITLE, {title, titleAttributes}, encodeSpecialCharacters)
 });
 
 export {convertReactPropstoHtmlAttributes};

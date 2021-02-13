@@ -1,37 +1,28 @@
-import babel from "rollup-plugin-babel";
-
+import { babel } from "@rollup/plugin-babel";
+import typescript from "@rollup/plugin-typescript";
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import pkg from "./package.json";
 
-const baseConfig = {
-    input: "src/Helmet.js",
-    plugins: [
-        babel({
-            exclude: "node_modules/**"
-        })
+export default {
+    input: "src/Helmet.tsx",
+    output: [
+        {
+            file: pkg.main,
+            format: "cjs",
+            sourcemap: true,
+        },
+        {
+            file: pkg.module,
+            format: "esm",
+            sourcemap: true,
+        },
     ],
-    external: [
-        ...Object.keys(pkg.dependencies),
-        ...Object.keys(pkg.peerDependencies)
-    ]
+    plugins: [
+        peerDepsExternal(),
+        typescript(),
+        babel({
+            exclude: "node_modules/**",
+            babelHelpers: "bundled",
+        }),
+    ],
 };
-
-export default [
-    Object.assign(
-        {
-            output: {
-                file: pkg.main,
-                format: "cjs"
-            }
-        },
-        baseConfig
-    ),
-    Object.assign(
-        {
-            output: {
-                file: "es/Helmet.js",
-                format: "esm"
-            }
-        },
-        baseConfig
-    )
-];
