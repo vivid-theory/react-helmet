@@ -11,7 +11,83 @@ import {
     TAG_PROPERTIES
 } from "./HelmetConstants.js";
 
-const encodeSpecialCharacters = (str, encode = true) => {
+
+interface OtherElementAttributes {
+    [key: string]: string | number | boolean | null | undefined;
+}
+
+type HtmlProps = JSX.IntrinsicElements['html'] & OtherElementAttributes;
+
+type BodyProps = JSX.IntrinsicElements['body'] & OtherElementAttributes;
+
+type LinkProps = JSX.IntrinsicElements['link'];
+
+type MetaProps = JSX.IntrinsicElements['meta'];
+
+export interface HelmetTags {
+    baseTag: Array<any>;
+    linkTags: Array<HTMLLinkElement>;
+    metaTags: Array<HTMLMetaElement>;
+    noscriptTags: Array<any>;
+    scriptTags: Array<HTMLScriptElement>;
+    styleTags: Array<HTMLStyleElement>;
+}
+
+export interface HelmetProps {
+    async?: boolean;
+    base?: any;
+    bodyAttributes?: BodyProps;
+    defaultTitle?: string;
+    defer?: boolean;
+    encodeSpecialCharacters?: boolean;
+    htmlAttributes?: HtmlProps;
+    onChangeClientState?: (newState: any, addedTags: HelmetTags, removedTags: HelmetTags) => void;
+    link?: LinkProps[];
+    meta?: MetaProps[];
+    noscript?: Array<any>;
+    script?: Array<any>;
+    style?: Array<any>;
+    title?: string;
+    titleAttributes?: Object;
+    titleTemplate?: string;
+}
+
+export interface HelmetData {
+    base: HelmetDatum;
+    bodyAttributes: HelmetHTMLBodyDatum;
+    htmlAttributes: HelmetHTMLElementDatum;
+    link: HelmetDatum;
+    meta: HelmetDatum;
+    noscript: HelmetDatum;
+    script: HelmetDatum;
+    style: HelmetDatum;
+    title: HelmetDatum;
+    titleAttributes: HelmetDatum;
+}
+
+export interface HelmetDatum {
+    toString(): string;
+    toComponent(): React.Component<any>;
+}
+
+export interface HelmetHTMLBodyDatum {
+    toString(): string;
+    toComponent(): React.HTMLAttributes<HTMLBodyElement>;
+}
+
+export interface HelmetHTMLElementDatum {
+    toString(): string;
+    toComponent(): React.HTMLAttributes<HTMLHtmlElement>;
+}
+
+
+// propsList
+// tagType
+// newState = any
+// encode = boolean
+
+
+const encodeSpecialCharacters = (str:string, encode = true) => {
     if (encode === false) {
         return String(str);
     }
@@ -24,7 +100,7 @@ const encodeSpecialCharacters = (str, encode = true) => {
         .replace(/'/g, "&#x27;");
 };
 
-const getTitleFromPropsList = propsList => {
+const getTitleFromPropsList = (propsList:HelmetProps[]) => {
     const innermostTitle = getInnermostProperty(propsList, TAG_NAMES.TITLE);
     const innermostTemplate = getInnermostProperty(
         propsList,
@@ -50,14 +126,14 @@ const getTitleFromPropsList = propsList => {
     return innermostTitle || innermostDefaultTitle || undefined;
 };
 
-const getOnChangeClientState = propsList => {
+const getOnChangeClientState = (propsList:HelmetProps[]) => {
     return (
         getInnermostProperty(propsList, HELMET_PROPS.ON_CHANGE_CLIENT_STATE) ||
         (() => {})
     );
 };
 
-const getAttributesFromPropsList = (tagType, propsList) => {
+const getAttributesFromPropsList = (tagType, propsList:HelmetProps[]) => {
     return propsList
         .filter(props => typeof props[tagType] !== "undefined")
         .map(props => props[tagType])
@@ -66,7 +142,7 @@ const getAttributesFromPropsList = (tagType, propsList) => {
         }, {});
 };
 
-const getBaseTagFromPropsList = (primaryAttributes, propsList) => {
+const getBaseTagFromPropsList = (primaryAttributes, propsList:HelmetProps[]) => {
     return propsList
         .filter(props => typeof props[TAG_NAMES.BASE] !== "undefined")
         .map(props => props[TAG_NAMES.BASE])
@@ -93,7 +169,7 @@ const getBaseTagFromPropsList = (primaryAttributes, propsList) => {
         }, []);
 };
 
-const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
+const getTagsFromPropsList = (tagName, primaryAttributes, propsList:HelmetProps[]) => {
     // Calculate list of tags, giving priority innermost component (end of the propslist)
     const approvedSeenTags = {};
 
@@ -194,7 +270,7 @@ const getTagsFromPropsList = (tagName, primaryAttributes, propsList) => {
         .reverse();
 };
 
-const getInnermostProperty = (propsList, property) => {
+const getInnermostProperty = (propsList:HelmetProps[], property:string) => {
     for (let i = propsList.length - 1; i >= 0; i--) {
         const props = propsList[i];
 
@@ -206,7 +282,7 @@ const getInnermostProperty = (propsList, property) => {
     return null;
 };
 
-const reducePropsToState = propsList => ({
+const reducePropsToState = (propsList:HelmetProps[]) => ({
     baseTag: getBaseTagFromPropsList(
         [TAG_PROPERTIES.HREF, TAG_PROPERTIES.TARGET],
         propsList
@@ -274,26 +350,26 @@ const rafPolyfill = (() => {
     };
 })();
 
-const cafPolyfill = (id: string | number) => clearTimeout(id);
+const cafPolyfill = (id: string | number) => clearTimeout(+id);
 
 const requestAnimationFrame =
     typeof window !== "undefined"
         ? (window.requestAnimationFrame &&
               window.requestAnimationFrame.bind(window)) ||
           window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame ||
+          (window as any).mozRequestAnimationFrame ||
           rafPolyfill
-        : global.requestAnimationFrame || rafPolyfill;
+        : (global as any).requestAnimationFrame || rafPolyfill;
 
 const cancelAnimationFrame =
     typeof window !== "undefined"
         ? window.cancelAnimationFrame ||
           window.webkitCancelAnimationFrame ||
-          window.mozCancelAnimationFrame ||
+          (window as any).mozCancelAnimationFrame ||
           cafPolyfill
-        : global.cancelAnimationFrame || cafPolyfill;
+        : (global as any).cancelAnimationFrame || cafPolyfill;
 
-const warn = msg => {
+const warn = (msg:string) => {
     return console && typeof console.warn === "function" && console.warn(msg);
 };
 
@@ -316,7 +392,7 @@ const handleClientStateChange = newState => {
     }
 };
 
-const commitTagChanges = (newState, cb) => {
+const commitTagChanges = (newState:any, cb?:Function) => {
     const {
         baseTag,
         bodyAttributes,
@@ -363,7 +439,7 @@ const commitTagChanges = (newState, cb) => {
     onChangeClientState(newState, addedTags, removedTags);
 };
 
-const flattenArray = possibleArray => {
+const flattenArray = (possibleArray: string|string[]) => {
     return Array.isArray(possibleArray)
         ? possibleArray.join("")
         : possibleArray;
@@ -549,7 +625,7 @@ const convertReactPropstoHtmlAttributes = (props, initAttributes = {}) => {
     }, initAttributes);
 };
 
-const generateTitleAsReactComponent = (type, title, attributes) => {
+const generateTitleAsReactComponent = (type, title:HelmetData, attributes) => {
     // assigning into an array to define toString function on it
     const initProps = {
         key: title,
@@ -564,7 +640,8 @@ const generateTagsAsReactComponent = (type, tags) =>
     tags.map((tag, i) => {
         const mappedTag = {
             key: i,
-            [HELMET_ATTRIBUTE]: true
+            [HELMET_ATTRIBUTE]: true,
+            dangerouslySetInnerHTML: null // TODO: Find this
         };
 
         Object.keys(tag).forEach(attribute => {
@@ -584,7 +661,7 @@ const generateTagsAsReactComponent = (type, tags) =>
         return React.createElement(type, mappedTag);
     });
 
-const getMethodsForTag = (type, tags, encode) => {
+const getMethodsForTag = (type:string, tags, encode:boolean) => {
     switch (type) {
         case TAG_NAMES.TITLE:
             return {
@@ -593,7 +670,7 @@ const getMethodsForTag = (type, tags, encode) => {
                         type,
                         tags.title,
                         tags.titleAttributes,
-                        encode
+                        // encode
                     ),
                 toString: () =>
                     generateTitleAsString(
