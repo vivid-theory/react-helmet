@@ -1,25 +1,21 @@
 import { babel } from "@rollup/plugin-babel";
 import typescript from "@rollup/plugin-typescript";
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
-import pkg from "./package.json";
 
 export default {
     input: "src/Helmet.tsx",
     output: [
         {
-            file: pkg.main,
-            format: "cjs",
-            sourcemap: true,
-        },
-        {
-            file: pkg.module,
+            dir: "dist",
             format: "esm",
             sourcemap: true,
         },
     ],
     plugins: [
+        typescript({
+            tsconfig: "./tsconfig.json",
+        }),
         peerDepsExternal(),
-        typescript(),
         babel({
             exclude: "node_modules/**",
             babelHelpers: "bundled",
