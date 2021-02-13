@@ -1,5 +1,5 @@
 {
-  "name": "react-helmet",
+  "name": "@vividtheory/react-helmet",
   "description": "A document head manager for React",
   "version": "6.1.0",
   "main": "./dist/lib/Helmet.js",
@@ -44,6 +44,7 @@
     "@babel/core": "^7.12.16",
     "@rollup/plugin-babel": "^5.2.3",
     "@rollup/plugin-node-resolve": "^11.1.1",
+    "@rollup/plugin-typescript": "^8.1.1",
     "@types/object-assign": "^4.0.30",
     "@types/react": "^17.0.2",
     "@types/react-side-effect": "^1.1.1",
@@ -84,6 +85,7 @@
     "karma-spec-reporter": "^0.0.32",
     "karma-tap-reporter": "^0.0.6",
     "mocha": "^7.2.0",
+    "pkg-ok": "^2.3.1",
     "prettier": "^1.4.4",
     "react": "16.13.1",
     "react-dom": "16.13.1",
@@ -109,7 +111,8 @@
     "pretest": "npm run clean && npm run lint",
     "commit": "git-cz",
     "build": "rollup -c",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "pkg-ok":"pkg-ok"
   },
   "config": {
     "commitizen": {
