@@ -9,7 +9,7 @@ import {
     SELF_CLOSING_TAGS,
     TAG_NAMES,
     TAG_PROPERTIES
-} from "./HelmetConstants.js";
+} from "./HelmetConstants";
 
 
 interface OtherElementAttributes {
