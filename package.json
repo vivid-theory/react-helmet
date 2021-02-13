@@ -1,7 +1,7 @@
 {
   "name": "@vividtheory/react-helmet",
   "description": "A document head manager for React",
-  "version": "7.0.0-0",
+  "version": "7.0.0",
   "main": "dist/Helmet.js",
   "module": "dist/Helmet.js",
   "types": "dist/Helmet.d.ts",
@@ -111,7 +111,7 @@
     "build": "rollup -c",
     "prepublish": "npm run build",
     "pkg-ok": "pkg-ok",
-    "prebuild":"rimraf dist"
+    "prebuild": "rimraf dist"
   },
   "config": {
     "commitizen": {
