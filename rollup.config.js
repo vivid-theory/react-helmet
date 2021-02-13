@@ -3,7 +3,7 @@ import typescript from "@rollup/plugin-typescript";
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 
 export default {
-    input: "src/index.ts",
+    input: "src/index.tsx",
     output: [
         {
             dir: "dist",

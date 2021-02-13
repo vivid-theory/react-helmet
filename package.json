@@ -109,7 +109,7 @@
     "pretest": "npm run clean && npm run lint",
     "commit": "git-cz",
     "build": "rollup -c",
-    "prepublish": "npm run build",
+    "prepublish": "yarn run build && yarn run pkg-ok",
     "pkg-ok": "pkg-ok",
     "prebuild": "rimraf dist"
   },
