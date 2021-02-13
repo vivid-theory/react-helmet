@@ -2,9 +2,9 @@
   "name": "@vividtheory/react-helmet",
   "description": "A document head manager for React",
   "version": "7.0.0",
-  "main": "dist/Helmet.js",
-  "module": "dist/Helmet.js",
-  "types": "dist/Helmet.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
     "Chris Welch <chris.welch@nfl.com>",
