@@ -26,7 +26,7 @@ module.exports = {
   plugins: ['standard', 'promise'],
   settings: {
     react: {
-      version: 'detect'
+      version: '17.0.1'
     }
   }
 }
