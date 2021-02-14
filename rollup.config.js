@@ -1,14 +1,17 @@
 import { babel } from "@rollup/plugin-babel";
 import typescript from "@rollup/plugin-typescript";
-import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import peerDepsExternal from "rollup-plugin-peer-deps-external";
 
 export default {
     input: "src/index.tsx",
     output: [
         {
-            dir: "dist",
+            dir: "./dist",
             format: "esm",
             sourcemap: true,
+            exports: "named",
+            preserveModulesRoot: "./src",
+            preserveModules: true,
         },
     ],
     plugins: [

@@ -3,8 +3,10 @@
   "description": "A document head manager for React",
   "version": "7.0.4",
   "main": "dist/index.js",
-  "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
   "author": "NFL <engineers@nfl.com>",
   "contributors": [
     "Chris Welch <chris.welch@nfl.com>",
