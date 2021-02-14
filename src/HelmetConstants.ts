@@ -4,6 +4,8 @@ export const ATTRIBUTE_NAMES = {
     TITLE: "titleAttributes"
 };
 
+export type TagTypes = "base" | "body" | "head" | "html" | "link" | "meta" | "noscript" | "script" | "style" | "title"
+
 export const TAG_NAMES = {
     BASE: "base",
     BODY: "body",

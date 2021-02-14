@@ -7,6 +7,7 @@ import {
     HTML_TAG_MAP,
     REACT_TAG_MAP,
     SELF_CLOSING_TAGS,
+    TagTypes,
     TAG_NAMES,
     TAG_PROPERTIES,
 } from "./HelmetConstants";
@@ -123,6 +124,7 @@ const getTitleFromPropsList = (propsList: HelmetProps[]) => {
 const getOnChangeClientState = (propsList: HelmetProps[]) => {
     return (
         getInnermostProperty(propsList, HELMET_PROPS.ON_CHANGE_CLIENT_STATE) ||
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         (() => {})
     );
 };
@@ -410,18 +412,18 @@ const commitTagChanges = (newState: HelmetProps, cb?: Function) => {
         title,
         titleAttributes,
     } = newState;
-    updateAttributes(TAG_NAMES.BODY, bodyAttributes);
-    updateAttributes(TAG_NAMES.HTML, htmlAttributes);
+    updateAttributes("body", bodyAttributes);
+    updateAttributes("html", htmlAttributes);
 
     updateTitle(title, titleAttributes);
 
     const tagUpdates = {
-        baseTag: updateTags(TAG_NAMES.BASE, baseTag),
-        linkTags: updateTags(TAG_NAMES.LINK, linkTags),
-        metaTags: updateTags(TAG_NAMES.META, metaTags),
-        noscriptTags: updateTags(TAG_NAMES.NOSCRIPT, noscriptTags),
-        scriptTags: updateTags(TAG_NAMES.SCRIPT, scriptTags),
-        styleTags: updateTags(TAG_NAMES.STYLE, styleTags),
+        baseTag: updateTags("base", baseTag),
+        linkTags: updateTags("link", linkTags),
+        metaTags: updateTags("meta", metaTags),
+        noscriptTags: updateTags("noscript", noscriptTags),
+        scriptTags: updateTags("script", scriptTags),
+        styleTags: updateTags("style", styleTags),
     };
 
     const addedTags: HelmetTags = {
@@ -468,10 +470,11 @@ const updateTitle = (title: string | string[], attributes: Object) => {
         document.title = flattenArray(title);
     }
 
-    updateAttributes(TAG_NAMES.TITLE, attributes);
+    updateAttributes("title", attributes);
 };
 
-const updateAttributes = (tagName, attributes) => {
+const updateAttributes = (tagName:TagTypes, attributes:Object) => {
+
     const elementTag = document.getElementsByTagName(tagName)[0];
 
     if (!elementTag) {
@@ -516,7 +519,7 @@ const updateAttributes = (tagName, attributes) => {
     }
 };
 
-const updateTags = (type, tags: any[]) => {
+const updateTags = (type: TagTypes, tags: any[]) => {
     const headElement = document.head || document.querySelector(TAG_NAMES.HEAD);
     const tagNodes = headElement.querySelectorAll(
         `${type}[${HELMET_ATTRIBUTE}]`
@@ -534,8 +537,8 @@ const updateTags = (type, tags: any[]) => {
                     if (attribute === TAG_PROPERTIES.INNER_HTML) {
                         newElement.innerHTML = tag.innerHTML;
                     } else if (attribute === TAG_PROPERTIES.CSS_TEXT) {
-                        if (newElement.styleSheet) {
-                            newElement.styleSheet.cssText = tag.cssText;
+                        if (newElement.style) {
+                            newElement.style.cssText = tag.cssText;
                         } else {
                             newElement.appendChild(
                                 document.createTextNode(tag.cssText)
@@ -567,11 +570,11 @@ const updateTags = (type, tags: any[]) => {
         });
     }
 
-    oldTags.forEach((tag) => tag.parentNode.removeChild(tag));
-    // newTags.forEach(tag => headElement.appendChild(tag));
+
+    oldTags.forEach((tag:HTMLElement) =>  tag.parentNode.removeChild(tag));
 
     // Insert new tags above others
-    newTags.forEach((tag) =>
+    newTags.forEach((tag:HTMLElement) =>
         headElement.insertBefore(tag, document.head.childNodes[0])
     );
 
@@ -611,6 +614,8 @@ const generateTitleAsString = (
 
 const generateTagsAsString = (type: string, tags: any[], encode: boolean) =>
     tags.reduce((str, tag) => {
+
+        console.log(tag)
         const attributeHtml = Object.keys(tag)
             .filter(
                 (attribute) =>
