@@ -1,20 +1,19 @@
-import React from "react";
-import PropTypes from "prop-types";
-import withSideEffect from "react-side-effect";
-import isEqual from "react-fast-compare";
+import React from 'react'
+import PropTypes from 'prop-types'
+import withSideEffect from 'react-side-effect'
+import isEqual from 'react-fast-compare'
 import {
-    convertReactPropstoHtmlAttributes,
-    handleClientStateChange,
-    HelmetProps,
-    mapStateOnServer,
-    reducePropsToState,
-    warn
-} from "./HelmetUtils";
-import {TAG_NAMES, VALID_TAG_NAMES} from "./HelmetConstants";
-
+  convertReactPropstoHtmlAttributes,
+  handleClientStateChange,
+  HelmetProps,
+  mapStateOnServer,
+  reducePropsToState,
+  warn
+} from './HelmetUtils'
+import { TAG_NAMES, VALID_TAG_NAMES } from './HelmetConstants'
 
 const Helmet = Component =>
-    class HelmetWrapper extends React.Component<HelmetProps> {
+  class HelmetWrapper extends React.Component<HelmetProps> {
         /**
          * @param {Object} base: {"target": "_blank", "href": "http://mysite.com/"}
          * @param {Object} bodyAttributes: {"className": "root"}
@@ -33,30 +32,30 @@ const Helmet = Component =>
          * @param {String} titleTemplate: "MySite.com - %s"
          */
         static propTypes = {
-            base: PropTypes.object,
-            bodyAttributes: PropTypes.object,
-            children: PropTypes.oneOfType([
-                PropTypes.arrayOf(PropTypes.node),
-                PropTypes.node
-            ]),
-            defaultTitle: PropTypes.string,
-            defer: PropTypes.bool,
-            encodeSpecialCharacters: PropTypes.bool,
-            htmlAttributes: PropTypes.object,
-            link: PropTypes.arrayOf(PropTypes.object),
-            meta: PropTypes.arrayOf(PropTypes.object),
-            noscript: PropTypes.arrayOf(PropTypes.object),
-            onChangeClientState: PropTypes.func,
-            script: PropTypes.arrayOf(PropTypes.object),
-            style: PropTypes.arrayOf(PropTypes.object),
-            title: PropTypes.string,
-            titleAttributes: PropTypes.object,
-            titleTemplate: PropTypes.string
+          base: PropTypes.object,
+          bodyAttributes: PropTypes.object,
+          children: PropTypes.oneOfType([
+            PropTypes.arrayOf(PropTypes.node),
+            PropTypes.node
+          ]),
+          defaultTitle: PropTypes.string,
+          defer: PropTypes.bool,
+          encodeSpecialCharacters: PropTypes.bool,
+          htmlAttributes: PropTypes.object,
+          link: PropTypes.arrayOf(PropTypes.object),
+          meta: PropTypes.arrayOf(PropTypes.object),
+          noscript: PropTypes.arrayOf(PropTypes.object),
+          onChangeClientState: PropTypes.func,
+          script: PropTypes.arrayOf(PropTypes.object),
+          style: PropTypes.arrayOf(PropTypes.object),
+          title: PropTypes.string,
+          titleAttributes: PropTypes.object,
+          titleTemplate: PropTypes.string
         };
 
         static defaultProps = {
-            defer: true,
-            encodeSpecialCharacters: true
+          defer: true,
+          encodeSpecialCharacters: true
         };
 
         static renderStatic = Component.renderStatic;
@@ -68,151 +67,151 @@ const Helmet = Component =>
         static peek = Component.peek;
 
         static rewind = () => {
-            let mappedState = Component.rewind();
-            if (!mappedState) {
-                // provide fallback if mappedState is undefined
-                mappedState = mapStateOnServer({
-                    baseTag: [],
-                    bodyAttributes: {},
-                    encodeSpecialCharacters: true,
-                    htmlAttributes: {},
-                    linkTags: [],
-                    metaTags: [],
-                    noscriptTags: [],
-                    scriptTags: [],
-                    styleTags: [],
-                    title: "",
-                    titleAttributes: {}
-                });
-            }
+          let mappedState = Component.rewind()
+          if (!mappedState) {
+            // provide fallback if mappedState is undefined
+            mappedState = mapStateOnServer({
+              baseTag: [],
+              bodyAttributes: {},
+              encodeSpecialCharacters: true,
+              htmlAttributes: {},
+              linkTags: [],
+              metaTags: [],
+              noscriptTags: [],
+              scriptTags: [],
+              styleTags: [],
+              title: '',
+              titleAttributes: {}
+            })
+          }
 
-            return mappedState;
+          return mappedState
         };
 
-        static set canUseDOM(canUseDOM: boolean) {
-            Component.canUseDOM = canUseDOM;
+        static set canUseDOM (canUseDOM: boolean) {
+          Component.canUseDOM = canUseDOM
         }
 
-        shouldComponentUpdate(nextProps) {
-            return !isEqual(this.props, nextProps);
+        shouldComponentUpdate (nextProps) {
+          return !isEqual(this.props, nextProps)
         }
 
-        mapNestedChildrenToProps(child, nestedChildren) {
-            if (!nestedChildren) {
-                return null;
-            }
+        mapNestedChildrenToProps (child, nestedChildren) {
+          if (!nestedChildren) {
+            return null
+          }
 
-            switch (child.type) {
-                case TAG_NAMES.SCRIPT:
-                case TAG_NAMES.NOSCRIPT:
-                    return {
-                        innerHTML: nestedChildren
-                    };
+          switch (child.type) {
+            case TAG_NAMES.SCRIPT:
+            case TAG_NAMES.NOSCRIPT:
+              return {
+                innerHTML: nestedChildren
+              }
 
-                case TAG_NAMES.STYLE:
-                    return {
-                        cssText: nestedChildren
-                    };
-            }
+            case TAG_NAMES.STYLE:
+              return {
+                cssText: nestedChildren
+              }
+          }
 
-            throw new Error(
+          throw new Error(
                 `<${
                     child.type
                 } /> elements are self-closing and can not contain children. Refer to our API for more information.`
-            );
+          )
         }
 
-        flattenArrayTypeChildren({
-            child,
-            arrayTypeChildren,
-            newChildProps,
-            nestedChildren
+        flattenArrayTypeChildren ({
+          child,
+          arrayTypeChildren,
+          newChildProps,
+          nestedChildren
         }) {
-            return {
-                ...arrayTypeChildren,
-                [child.type]: [
-                    ...(arrayTypeChildren[child.type] || []),
-                    {
-                        ...newChildProps,
-                        ...this.mapNestedChildrenToProps(child, nestedChildren)
-                    }
-                ]
-            };
+          return {
+            ...arrayTypeChildren,
+            [child.type]: [
+              ...(arrayTypeChildren[child.type] || []),
+              {
+                ...newChildProps,
+                ...this.mapNestedChildrenToProps(child, nestedChildren)
+              }
+            ]
+          }
         }
 
-        mapObjectTypeChildren({
-            child,
-            newProps,
-            newChildProps,
-            nestedChildren
+        mapObjectTypeChildren ({
+          child,
+          newProps,
+          newChildProps,
+          nestedChildren
         }) {
-            switch (child.type) {
-                case TAG_NAMES.TITLE:
-                    return {
-                        ...newProps,
-                        [child.type]: nestedChildren,
-                        titleAttributes: {...newChildProps}
-                    };
-
-                case TAG_NAMES.BODY:
-                    return {
-                        ...newProps,
-                        bodyAttributes: {...newChildProps}
-                    };
-
-                case TAG_NAMES.HTML:
-                    return {
-                        ...newProps,
-                        htmlAttributes: {...newChildProps}
-                    };
-            }
-
-            return {
+          switch (child.type) {
+            case TAG_NAMES.TITLE:
+              return {
                 ...newProps,
-                [child.type]: {...newChildProps}
-            };
+                [child.type]: nestedChildren,
+                titleAttributes: { ...newChildProps }
+              }
+
+            case TAG_NAMES.BODY:
+              return {
+                ...newProps,
+                bodyAttributes: { ...newChildProps }
+              }
+
+            case TAG_NAMES.HTML:
+              return {
+                ...newProps,
+                htmlAttributes: { ...newChildProps }
+              }
+          }
+
+          return {
+            ...newProps,
+            [child.type]: { ...newChildProps }
+          }
         }
 
-        mapArrayTypeChildrenToProps(arrayTypeChildren, newProps) {
-            let newFlattenedProps = {...newProps};
+        mapArrayTypeChildrenToProps (arrayTypeChildren, newProps) {
+          let newFlattenedProps = { ...newProps }
 
-            Object.keys(arrayTypeChildren).forEach(arrayChildName => {
-                newFlattenedProps = {
-                    ...newFlattenedProps,
-                    [arrayChildName]: arrayTypeChildren[arrayChildName]
-                };
-            });
+          Object.keys(arrayTypeChildren).forEach(arrayChildName => {
+            newFlattenedProps = {
+              ...newFlattenedProps,
+              [arrayChildName]: arrayTypeChildren[arrayChildName]
+            }
+          })
 
-            return newFlattenedProps;
+          return newFlattenedProps
         }
 
-        warnOnInvalidChildren(child, nestedChildren) {
-            if (process.env.NODE_ENV !== "production") {
-                if (!VALID_TAG_NAMES.some(name => child.type === name)) {
-                    if (typeof child.type === "function") {
-                        return warn(
-                            `You may be attempting to nest <Helmet> components within each other, which is not allowed. Refer to our API for more information.`
-                        );
-                    }
+        warnOnInvalidChildren (child, nestedChildren) {
+          if (process.env.NODE_ENV !== 'production') {
+            if (!VALID_TAG_NAMES.some(name => child.type === name)) {
+              if (typeof child.type === 'function') {
+                return warn(
+                  'You may be attempting to nest <Helmet> components within each other, which is not allowed. Refer to our API for more information.'
+                )
+              }
 
-                    return warn(
+              return warn(
                         `Only elements types ${VALID_TAG_NAMES.join(
-                            ", "
+                            ', '
                         )} are allowed. Helmet does not support rendering <${
                             child.type
                         }> elements. Refer to our API for more information.`
-                    );
-                }
+              )
+            }
 
-                if (
-                    nestedChildren &&
-                    typeof nestedChildren !== "string" &&
+            if (
+              nestedChildren &&
+                    typeof nestedChildren !== 'string' &&
                     (!Array.isArray(nestedChildren) ||
                         nestedChildren.some(
-                            nestedChild => typeof nestedChild !== "string"
+                          nestedChild => typeof nestedChild !== 'string'
                         ))
-                ) {
-                    throw new Error(
+            ) {
+              throw new Error(
                         `Helmet expects a string as a child of <${
                             child.type
                         }>. Did you forget to wrap your children in braces? ( <${
@@ -220,82 +219,82 @@ const Helmet = Component =>
                         }>{\`\`}</${
                             child.type
                         }> ) Refer to our API for more information.`
-                    );
-                }
+              )
+            }
+          }
+
+          return true
+        }
+
+        mapChildrenToProps (children, newProps) {
+          let arrayTypeChildren = {}
+
+          React.Children.forEach(children, child => {
+            if (!child || !child.props) {
+              return
             }
 
-            return true;
-        }
+            const { children: nestedChildren, ...childProps } = child.props
+            const newChildProps = convertReactPropstoHtmlAttributes(
+              childProps
+            )
 
-        mapChildrenToProps(children, newProps) {
-            let arrayTypeChildren = {};
+            this.warnOnInvalidChildren(child, nestedChildren)
 
-            React.Children.forEach(children, child => {
-                if (!child || !child.props) {
-                    return;
-                }
+            switch (child.type) {
+              case TAG_NAMES.LINK:
+              case TAG_NAMES.META:
+              case TAG_NAMES.NOSCRIPT:
+              case TAG_NAMES.SCRIPT:
+              case TAG_NAMES.STYLE:
+                arrayTypeChildren = this.flattenArrayTypeChildren({
+                  child,
+                  arrayTypeChildren,
+                  newChildProps,
+                  nestedChildren
+                })
+                break
 
-                const {children: nestedChildren, ...childProps} = child.props;
-                const newChildProps = convertReactPropstoHtmlAttributes(
-                    childProps
-                );
-
-                this.warnOnInvalidChildren(child, nestedChildren);
-
-                switch (child.type) {
-                    case TAG_NAMES.LINK:
-                    case TAG_NAMES.META:
-                    case TAG_NAMES.NOSCRIPT:
-                    case TAG_NAMES.SCRIPT:
-                    case TAG_NAMES.STYLE:
-                        arrayTypeChildren = this.flattenArrayTypeChildren({
-                            child,
-                            arrayTypeChildren,
-                            newChildProps,
-                            nestedChildren
-                        });
-                        break;
-
-                    default:
-                        newProps = this.mapObjectTypeChildren({
-                            child,
-                            newProps,
-                            newChildProps,
-                            nestedChildren
-                        });
-                        break;
-                }
-            });
-
-            newProps = this.mapArrayTypeChildrenToProps(
-                arrayTypeChildren,
-                newProps
-            );
-            return newProps;
-        }
-
-        render() {
-            const {children, ...props} = this.props;
-            let newProps = {...props};
-
-            if (children) {
-                newProps = this.mapChildrenToProps(children, newProps);
+              default:
+                newProps = this.mapObjectTypeChildren({
+                  child,
+                  newProps,
+                  newChildProps,
+                  nestedChildren
+                })
+                break
             }
+          })
 
-            return <Component {...newProps} />;
+          newProps = this.mapArrayTypeChildrenToProps(
+            arrayTypeChildren,
+            newProps
+          )
+          return newProps
         }
-    };
 
-const NullComponent = () => null;
+        render () {
+          const { children, ...props } = this.props
+          let newProps = { ...props }
+
+          if (children) {
+            newProps = this.mapChildrenToProps(children, newProps)
+          }
+
+          return <Component {...newProps} />
+        }
+  }
+
+const NullComponent = () => null
 
 const HelmetSideEffects = withSideEffect(
-    reducePropsToState,
-    handleClientStateChange,
-    mapStateOnServer
-)(NullComponent);
+  reducePropsToState,
+  handleClientStateChange,
+  mapStateOnServer
+)(NullComponent)
 
-const HelmetExport = Helmet(HelmetSideEffects);
-HelmetExport.renderStatic = HelmetExport.rewind;
+const HelmetExport = Helmet(HelmetSideEffects)
+HelmetExport.renderStatic = HelmetExport.rewind
 
-export {HelmetExport as Helmet};
-export default HelmetExport;
+export { HelmetExport as Helmet }
+export default HelmetExport
