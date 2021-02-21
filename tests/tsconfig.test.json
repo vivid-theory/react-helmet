@@ -12,6 +12,6 @@
         "esModuleInterop": true,
         "resolveJsonModule": true
     },
-    "include": ["**/*.spec.tsx"],
+    "include": ["./tests"],
     "exclude": ["**/*/node_modules", "dist"]
 }

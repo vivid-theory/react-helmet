@@ -1,10 +1,9 @@
-/* eslint-disable import/first */
 import { DOMWindow, JSDOM } from 'jsdom'
 import Enzyme from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
 
 interface Global extends NodeJS.Global {
-    window: DOMWindow | Window,
+    window: any,
     document: Document,
     navigator: {
         userAgent: string
