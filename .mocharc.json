@@ -1,0 +1,4 @@
+{
+    "extension": ["ts", "tsx"],
+    "require": ["@babel/register", "jsdom-global/register"]
+  }

@@ -1,15 +1,26 @@
+/* eslint-disable no-var */
+/* eslint-disable prefer-const */
 /* eslint-disable no-unused-expressions */
 /* eslint max-nested-callbacks: [1, 7] */
 import { expect } from 'chai'
+import { requestAnimationFrame } from '../src/HelmetUtils'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import ReactServer from 'react-dom/server'
-import { Helmet } from './index'
-import { HTML_TAG_MAP } from './HelmetConstants'
-import { requestAnimationFrame } from './HelmetUtils'
+import { Helmet } from '../src/index'
+import { HTML_TAG_MAP } from '../src/HelmetConstants'
 import sinon from 'sinon'
+import ReactServer from 'react-dom/server'
 
-const HELMET_ATTRIBUTE = 'data-react-helmet'
+// let expect = require('chai')
+// let React = require('react')
+// var ReactDOM = require('react-dom')
+// let ReactServer = require('react-dom/server')
+// let Helmet = require('../src/index')
+// let HTML_TAG_MAP = require('../src/Helmetletants')
+// let requestAnimationFrame = require('../src/HelmetUtils')
+// let sinon = require('sinon')
+
+let HELMET_ATTRIBUTE = 'data-react-helmet'
 
 describe('Helmet - Declarative API', () => {
   let headElement

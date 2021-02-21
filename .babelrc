@@ -1,14 +1,10 @@
 {
+    "sourceType": "module",
     "presets": [
-        ["env", {
-            "targets": {
-                "browsers": ["last 1 versions", "ie >= 10"]
-            },
-            "modules": false,
-            "loose": true
-        }],
-        "react"
-    ],
+        "@babel/preset-env",
+        "@babel/preset-typescript",
+        "@babel/react"
+      ],
     "plugins": [
         "transform-class-properties",
         "transform-object-rest-spread",
